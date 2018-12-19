@@ -7,11 +7,10 @@
 
 using namespace std;
 
-class Monom
+struct Monom
 {
 	int coef;
 	int pow;
-public:
 	int GetCoef()
 	{
 		return coef;
@@ -61,7 +60,6 @@ public:
 		q.pow = pow;
 		return q;
 	}
-
 	friend ostream& operator<<(ostream& os, const Monom& tmp);
 };
 ostream& operator<<(ostream& os, Monom& tmp)
@@ -83,10 +81,6 @@ public:
 		polynom = _pol;
 		if (polynom != "")
 			FillPolynom();
-	}
-	~Polynom()
-	{
-		pol.Clear();
 	}
 	bool IsOperation(char p)
 	{
@@ -117,6 +111,7 @@ public:
 	}
 	void FillPolynom()
 	{
+		pol.Clear();
 		vector<string> strpol;
 		int i = 0;
 		do
@@ -191,44 +186,94 @@ public:
 	Polynom operator+(Polynom &tmp)
 	{
 		Polynom q;
-		int size;
-		if (pol.GetCount() >= tmp.pol.GetCount())
-			size = pol.GetCount();
-		else size = tmp.pol.GetCount();
-		for (int i = 0; i < size; i++)
+		Monom mon;
+		int i = 0;
+		int j = 0;
+		while ((i < pol.GetCount()) && (j < tmp.pol.GetCount()))
 		{
-			if (pol[i].GetPow() == tmp.pol[i].GetPow())
-				if (pol[i] + tmp.pol[i] == 0)
-					continue;
-			q.pol.PushBack(pol[i] + tmp.pol[i]);
+			if (pol[i].pow > tmp.pol[j].pow)
+			{
+				q.pol.PushBack(pol[i]);
+				i++;
+			}
+			else if (pol[i].pow < tmp.pol[j].pow)
+			{
+				q.pol.PushBack(tmp.pol[j]);
+				j++;
+			}
+			else if ((pol[i].coef + tmp.pol[j].coef) != 0)
+			{
+				mon.coef = pol[i].coef + tmp.pol[j].coef;
+				mon.pow = pol[i].pow;
+				q.pol.PushBack(mon);
+				i++;
+				j++;
+			}
+			else
+			{
+				i++;
+				j++;
+			}
 		}
+		if (i == pol.GetCount())
+			while (j < tmp.pol.GetCount())
+			{
+				q.pol.PushBack(tmp.pol[j]);
+				j++;
+			}
+		else while (i < tmp.pol.GetCount())
+		{
+			q.pol.PushBack(pol[i]);
+			i++;
+		}
+		q.PolynomInString();
 		return q;
 	}
 	Polynom operator-(Polynom &tmp)
 	{
 		Polynom q;
-		int size;
-		if (pol.GetCount() >= tmp.pol.GetCount())
-			size = pol.GetCount();
-		else size = tmp.pol.GetCount();
-		for (int i = 0; i < size; i++)
-			if (pol[i].GetPow() == tmp.pol[i].GetPow())
-				q.pol.PushBack(pol[i] - tmp.pol[i]);
+		q = tmp;
+		for (int i = 0; i < q.pol.GetCount(); i++)
+			q.pol[i].coef = -1 * q.pol[i].coef;
+		q = *this + q;
 		return q;
 	}
 	Polynom& operator=(Polynom &p)
 	{
-		pol=p.pol;
+		pol = p.pol;
 		polynom = p.polynom;
 		return *this;
+	}
+	void PolynomInString()
+	{
+		polynom = "";
+		polynom += to_string(pol[0].coef);
+		if (pol[0].pow / 100 != 0)
+			polynom = polynom + "x" + to_string(pol[0].pow / 100);
+		if ((pol[0].pow / 10) % 10 != 0)
+			polynom = polynom + "y" + to_string((pol[0].pow / 10) % 10);
+		if (pol[0].pow % 10 != 0)
+			polynom = polynom + "z" + to_string(pol[0].pow % 10);
+		for (int i = 1; i < pol.GetCount(); i++)
+		{
+			if (pol[i].coef > 0)
+				polynom += "+";
+			polynom += to_string(pol[i].coef);
+			if (pol[i].pow / 100 != 0)
+				polynom = polynom + "x" + to_string(pol[i].pow / 100);
+			if ((pol[i].pow / 10) % 10 != 0)
+				polynom = polynom + "y" + to_string((pol[i].pow / 10) % 10);
+			if (pol[i].pow % 10 != 0)
+				polynom = polynom + "z" + to_string(pol[i].pow % 10);
+		}
 	}
 	friend ostream& operator<<(ostream& os, Polynom& tmp);
 };
 ostream& operator<<(ostream& os, Polynom& tmp)
 {
-	for (int i = 0; i < tmp.pol.GetCount(); i++)
+	for (int i = 0; i < tmp.polynom.size(); i++)
 	{
-		os << tmp.pol[i];
+		os << tmp.polynom[i];
 	}
 	return os;
 }

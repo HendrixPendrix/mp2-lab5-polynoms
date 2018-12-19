@@ -81,7 +81,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="sample_postfix.cpp" />
+    <ClCompile Include="sample_polynom.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Polynom.h" />

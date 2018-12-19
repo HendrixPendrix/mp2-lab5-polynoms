@@ -28,13 +28,7 @@ public:
 	}
 	~List()
 	{
-		Node <Telem> *p = First;
-		while (p != nullptr)
-		{
-			First = p->Next;
-			delete p;
-			First = p;
-		}
+		Clear();
 	}
 	Telem& operator[](const int index)
 	{
@@ -56,7 +50,6 @@ public:
 	{
 		return count;
 	}
-
 	void PushBack(Telem k)
 	{
 		if (First == nullptr)
