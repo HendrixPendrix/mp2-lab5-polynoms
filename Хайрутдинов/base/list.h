@@ -6,7 +6,7 @@ struct Node
 {
 	Telem key;
 	Node *Next;
-	Node(Telem data = Telem(), Node *pNext = nullptr)
+	Node(Telem data , Node *pNext = nullptr)
 	{
 		this->key = data;
 		this->Next = pNext;
@@ -41,6 +41,17 @@ public:
 			Curr = Curr->Next;
 			tmp++;
 		}
+	}
+	List<Telem>& operator=(const List<Telem> &listo4ek)
+	{
+		Clear();
+		Node<Telem> *q = listo4ek.First;
+		while (q != nullptr)
+		{
+			PushBack(q->key);
+			q = q->Next;
+		}
+		return *this;
 	}
 	bool isEmpty()
 	{

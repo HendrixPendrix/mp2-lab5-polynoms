@@ -17,6 +17,7 @@ TEST(Polynom, can_assign_polinoms)
 	Polynom p2("x+y+z");
 	ASSERT_NO_THROW(p2 = p1);
 }
+
 TEST(Monom, can_add_monom)
 {
 	Monom m;
